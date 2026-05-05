@@ -8,6 +8,7 @@ import AddProductComponent from './components/AddProductComponent';
 import SignInComponent from './components/SignInComponent';
 import SignUpComponent from './components/SignUpComponent';
 import MakePaymentComponent from './components/MakePaymentComponent';
+import SmartCart from './components/SmartCart';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 

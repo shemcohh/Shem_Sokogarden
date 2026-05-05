@@ -1,91 +1,139 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import NavbarComponent from "./NavbarComponent";
 
 const SignInComponent = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    let  [email, getemail] = useState("");
-    let  [password, getPassword] = useState("");
+  const navigate = useNavigate();
 
-    let [loading,setLoading] = useState("");
-    let [error, setError] = useState("");
-    let [success, setSuccess] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
 
-    // use a hook called useNavigate for automatically changing the route/url
-    let navigator = useNavigate()
+    try {
+      const user_data = new FormData();
+      user_data.append("email", email);
+      user_data.append("password", password);
 
-    const handleSubmit = async (e)=> {
-        e.preventDefault();
+      const response = await axios.post("https://shemriley.alwaysdata.net/api/signin", user_data);
+      
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        setSuccess("Welcome back! Redirecting...");
+        setTimeout(() => navigate("/"), 1500);
+      } else {
+        setError(response.data.message || "Invalid credentials");
+      }
+    } catch (error) {
+      setError("Login failed. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setError("")
-        setSuccess("")
-        setLoading("please wait..........");
+  return (
+    <div className="auth-page min-vh-100 d-flex align-items-center" style={{background: 'linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%)'}}>
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-lg-5 col-md-7">
+            <div className="auth-card card shadow-lg border-0">
+              <div className="card-body p-5">
+                <div className="text-center mb-5">
+                  <h1 className="h2 fw-bold text-white mb-2">🔐 Welcome Back</h1>
+                  <p className="text-white-50 mb-0">Sign in to your Sokogarden account</p>
+                </div>
 
-        try {
-            // create a form data
-            const user_data = new FormData();
+                {/* Status Messages */}
+                {loading && (
+                  <div className="alert alert-warning text-center mb-4 animate-pulse">
+                    <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                    Signing you in...
+                  </div>
+                )}
+                {error && (
+                  <div className="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i className="fas fa-exclamation-circle me-2"></i>{error}
+                    <button type="button" className="btn-close" onClick={() => setError("")}></button>
+                  </div>
+                )}
+                {success && (
+                  <div className="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i className="fas fa-check-circle me-2"></i>{success}
+                  </div>
+                )}
 
-            // add the email and password to user data
-            user_data.append("email", email);
-            user_data.append("password", password);
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-4">
+                    <label htmlFor="email" className="form-label fw-semibold mb-2">Email Address</label>
+                    <div className="input-group input-group-lg">
+                      <span className="input-group-text">
+                        <i className="fas fa-envelope"></i>
+                      </span>
+                      <input 
+                        type="email" 
+                        className="form-control" 
+                        id="email"
+                        placeholder="your.email@example.com" 
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-            // use axios to send data to server/ backend and get response
-            const response = await axios.post("https://shemriley.alwaysdata.net/api/signin", user_data)
-            console.log(response);
-            if(response.data.user){
-                setLoading("")
-                setSuccess(response.data.message)
-                localStorage.setItem("user", JSON.stringify(response.data.user));
-                navigator("/")
-            } else {
-                setLoading("")
-                setError(response.data.message)
-            }
+                  <div className="mb-4">
+                    <label htmlFor="password" className="form-label fw-semibold mb-2">Password</label>
+                    <div className="input-group input-group-lg">
+                      <span className="input-group-text">
+                        <i className="fas fa-lock"></i>
+                      </span>
+                      <input 
+                        type="password" 
+                        className="form-control" 
+                        id="password"
+                        placeholder="Enter your password" 
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-        } catch (error) {
-            setLoading("")
-            setError(error.message);
-        }
-    };
+                  <button 
+                    type="submit" 
+                    className="btn btn-lg btn-primary w-100 mb-3 fw-semibold"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2"></span>
+                        Signing In...
+                      </>
+                    ) : (
+                      'Sign In'
+                    )}
+                  </button>
 
-
-    return (
-        <div className="row justify-content-center mt-4">
-            <div className="col-md-6 card shadow p-4">
-                {/* <NavbarComponent/> */}
-            <h2>Sign In</h2>
-            <h5 className="text-warning">{loading}</h5>
-            <h5 className="text-danger">{error}</h5>
-            <h5 className="text-success">{success}</h5>
-            <form onSubmit={handleSubmit}
-                action="">
-                <input type="email" 
-                className="form-control my-3" 
-                placeholder="Enter Email" 
-                required
-                onChange={(e)=>{getemail(e.target.value)}} 
-                value={email}/>
-
-                <input type="password" 
-                className="form-control my-3" 
-                placeholder="Enter Password" 
-                required
-                onChange={(e)=>{getPassword(e.target.value)}}
-                value={password}/>
-
-                <button className="btn btn-danger my-3">
-                    sign in
-                </button>
-
-                <br />
-                <Link to="/signUp">Don't have an account? sign up</Link>
-            </form> 
+                  <div className="text-center">
+                    <Link to="/signup" className="text-white text-decoration-none fw-medium">
+                      Don't have an account? <span className="text-white-50">Create one</span>
+                    </Link>
+                  </div>
+                </form>
+              </div>
             </div>
-            
-            
+          </div>
         </div>
-    );
-}
+      </div>
+    </div>
+  );
+};
 
-export default SignInComponent
+export default SignInComponent;

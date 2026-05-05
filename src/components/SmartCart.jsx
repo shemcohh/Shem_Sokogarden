@@ -35,7 +35,8 @@ const SmartCart = () => {
                           alt={item.product_name}
                           className="img-fluid rounded"
                           style={{width: '80px', height: '80px', objectFit: 'cover'}}
-                          onError={(e) => {e.target.src = '/logo.svg';}}
+                          loading="lazy"
+                          onError={(e) => { e.target.src = '/logo.svg'; }}
                         />
                       </div>
                       <div className="col-md-4">
