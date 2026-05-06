@@ -9,6 +9,7 @@ import SignInComponent from './components/SignInComponent';
 import SignUpComponent from './components/SignUpComponent';
 import MakePaymentComponent from './components/MakePaymentComponent';
 import SmartCart from './components/SmartCart';
+import { Analytics } from '@vercel/analytics/react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 
@@ -27,6 +28,7 @@ function App() {
             <Route path="/makepayment" element={<MakePaymentComponent />} />
           </Routes>
         </div>
+        <Analytics />
       </BrowserRouter>
     </CartProvider>
   );
